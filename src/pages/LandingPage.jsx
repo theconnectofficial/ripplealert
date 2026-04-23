@@ -358,6 +358,13 @@ export default function LandingPage({ onLaunch }) {
 
   const heroRef = useRef(null);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   // Navbar opacity on scroll
   useEffect(() => {
@@ -418,7 +425,7 @@ export default function LandingPage({ onLaunch }) {
             <img src={raLogo} alt="RippleAlert" style={logoImg} />
             <span style={logoText}>RippleAlert</span>
           </div>
-          <div style={navLinks}>
+          <div style={navLinks} className="nav-links-center">
             {NAV_ITEMS.map(({ label, href }) => (
               <a
                 key={href}
@@ -432,14 +439,68 @@ export default function LandingPage({ onLaunch }) {
               >{label}</a>
             ))}
           </div>
-          <button onClick={launch} style={navCTA}>
+          <button onClick={launch} style={navCTA} className="nav-cta-desktop">
             Launch App <span style={{ marginLeft: 6 }}>→</span>
+          </button>
+          <button
+            type="button"
+            className="nav-hamburger"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+            style={hamburgerBtn}
+          >
+            <span style={{
+              ...hamLine,
+              transform: mobileOpen ? "translateY(6px) rotate(45deg)" : "none",
+            }} />
+            <span style={{
+              ...hamLine,
+              opacity: mobileOpen ? 0 : 1,
+              margin: "5px 0",
+            }} />
+            <span style={{
+              ...hamLine,
+              transform: mobileOpen ? "translateY(-6px) rotate(-45deg)" : "none",
+            }} />
           </button>
         </div>
       </nav>
 
+      {/* ── Mobile Menu Drawer ─────────────────────────────────────────────── */}
+      <div
+        className="mobile-drawer"
+        style={{
+          ...mobileDrawer,
+          opacity: mobileOpen ? 1 : 0,
+          pointerEvents: mobileOpen ? "auto" : "none",
+          transform: mobileOpen ? "translateY(0)" : "translateY(-8px)",
+        }}
+      >
+        {NAV_ITEMS.map(({ label, href }) => (
+          <a
+            key={href}
+            href={href}
+            style={mobileLink}
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileOpen(false);
+              setTimeout(() => {
+                document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+              }, 120);
+            }}
+          >{label}</a>
+        ))}
+        <button
+          onClick={() => { setMobileOpen(false); launch(); }}
+          style={{ ...navCTA, width: "100%", marginTop: 8, padding: "12px 16px", fontSize: 13 }}
+        >
+          Launch App →
+        </button>
+      </div>
+
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section ref={heroRef} style={heroStyle}>
+      <section ref={heroRef} style={heroStyle} className="ra-hero">
         <div className="hero-cursor-glow" />
         <DependencyGraph3D />
         <ThreatGrid />
@@ -491,7 +552,7 @@ export default function LandingPage({ onLaunch }) {
       </section>
 
       {/* ── PROBLEM ───────────────────────────────────────────────────────── */}
-      <section id="problem" style={section}>
+      <section id="problem" style={section} className="ra-section">
         <div data-reveal className="reveal" style={sectionHead}>
           <Eyebrow color={C.red}>THE PROBLEM</Eyebrow>
           <h2 style={h2}>The Silent Epidemic</h2>
@@ -499,7 +560,7 @@ export default function LandingPage({ onLaunch }) {
             Most developers discover they were vulnerable months after the breach.
           </p>
         </div>
-        <div style={grid3}>
+        <div style={grid3} className="ra-grid3">
           {PROBLEMS.map((p, i) => (
             <div key={p.title} data-reveal className="reveal problem-card" style={problemCard}>
               <div style={problemNum}>{String(i + 1).padStart(2, "0")}</div>
@@ -512,7 +573,7 @@ export default function LandingPage({ onLaunch }) {
       </section>
 
       {/* ── FEATURES ──────────────────────────────────────────────────────── */}
-      <section id="features" style={{ ...section, background: "linear-gradient(180deg, transparent, rgba(99,102,241,0.025), transparent)" }}>
+      <section id="features" style={{ ...section, background: "linear-gradient(180deg, transparent, rgba(99,102,241,0.025), transparent)" }} className="ra-section">
         <div data-reveal className="reveal" style={sectionHead}>
           <Eyebrow color={C.indigo}>CAPABILITIES</Eyebrow>
           <h2 style={h2}>Full Spectrum Defense</h2>
@@ -530,7 +591,7 @@ export default function LandingPage({ onLaunch }) {
       </section>
 
       {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
-      <section id="how" style={{ ...section, ...sectionGridBg }}>
+      <section id="how" style={{ ...section, ...sectionGridBg }} className="ra-section">
         <div data-reveal className="reveal" style={sectionHead}>
           <Eyebrow color={C.red}>WORKFLOW</Eyebrow>
           <h2 style={h2}>From CVE to Patch in Seconds</h2>
@@ -538,7 +599,7 @@ export default function LandingPage({ onLaunch }) {
             Five steps. No manual triage. No spreadsheets. No guessing.
           </p>
         </div>
-        <div data-reveal className="reveal" style={stepsRow}>
+        <div data-reveal className="reveal ra-steps-row" style={stepsRow}>
           {STEPS.map((s, i) => (
             <div key={s.title} style={{ display: "flex", alignItems: "center", flex: 1, minWidth: 0 }}>
               <div style={stepCol}>
@@ -557,13 +618,13 @@ export default function LandingPage({ onLaunch }) {
       </section>
 
       {/* ── TECH STACK ────────────────────────────────────────────────────── */}
-      <section id="stack" style={section}>
+      <section id="stack" style={section} className="ra-section">
         <div data-reveal className="reveal" style={sectionHead}>
           <Eyebrow color={C.indigo}>UNDER THE HOOD</Eyebrow>
           <h2 style={h2}>Built on the Right Stack</h2>
           <p style={subH}>Production-grade primitives, no over-engineering.</p>
         </div>
-        <div style={grid3}>
+        <div style={grid3} className="ra-grid3">
           {STACK.map((s) => (
             <div key={s.layer} data-reveal className="reveal" style={stackCard}>
               <div style={stackTop}>
@@ -577,7 +638,7 @@ export default function LandingPage({ onLaunch }) {
       </section>
 
       {/* ── DEMO ──────────────────────────────────────────────────────────── */}
-      <section id="demo" style={section}>
+      <section id="demo" style={section} className="ra-section">
         <div data-reveal className="reveal" style={sectionHead}>
           <Eyebrow color={C.red}>LIVE DEMO</Eyebrow>
           <h2 style={h2}>See it in Action</h2>
@@ -585,7 +646,7 @@ export default function LandingPage({ onLaunch }) {
         </div>
 
         <div data-reveal className="reveal" style={demoFrameWrap}>
-          <div style={demoFrame}>
+          <div style={demoFrame} className="ra-demo-frame">
             <div style={browserBar}>
               <span style={{ ...dot, background: "#ff5f57" }} />
               <span style={{ ...dot, background: "#febc2e" }} />
@@ -609,7 +670,7 @@ export default function LandingPage({ onLaunch }) {
                 </div>
               </div>
 
-              <div style={demoStats}>
+              <div style={demoStats} className="ra-demo-stats">
                 <DemoStat label="In Blast Radius" value="15" accent={C.red} />
                 <DemoStat label="Direct Deps"     value="3"  accent={C.indigo} />
                 <DemoStat label="Transitive"      value="12" accent={C.indigo} />
@@ -628,7 +689,7 @@ export default function LandingPage({ onLaunch }) {
       </section>
 
       {/* ── FINAL CTA ─────────────────────────────────────────────────────── */}
-      <section style={{ ...section, paddingBottom: 60 }}>
+      <section style={{ ...section, paddingBottom: 60 }} className="ra-section">
         <div data-reveal className="reveal" style={ctaCard}>
           <h2 style={{ ...h2, marginBottom: 14 }}>Map your blast radius.</h2>
           <p style={{ ...subH, marginBottom: 28 }}>
@@ -641,8 +702,8 @@ export default function LandingPage({ onLaunch }) {
       </section>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer style={footerStyle}>
-        <div style={footerTop}>
+      <footer style={footerStyle} className="ra-footer">
+        <div style={footerTop} className="ra-footer-top">
           {/* Brand column */}
           <div style={footerBrand}>
             <div style={{ ...logoStyle, marginBottom: 14 }}>
@@ -919,6 +980,46 @@ const navCTA = {
   padding: "9px 16px", borderRadius: 7, cursor: "pointer",
   fontWeight: 600,
   transition: "transform 160ms ease, box-shadow 160ms ease",
+};
+
+const hamburgerBtn = {
+  display: "none", // shown only on mobile via CSS
+  background: "transparent",
+  border: `1px solid ${C.border}`,
+  borderRadius: 8,
+  padding: "8px 9px",
+  cursor: "pointer",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  width: 40, height: 36,
+};
+const hamLine = {
+  display: "block",
+  width: 18, height: 2,
+  background: C.text,
+  borderRadius: 2,
+  transition: "transform 220ms ease, opacity 220ms ease",
+};
+const mobileDrawer = {
+  position: "fixed",
+  top: 64, left: 12, right: 12, zIndex: 49,
+  display: "none", // shown only on mobile via CSS
+  flexDirection: "column",
+  gap: 4,
+  padding: 14,
+  background: "rgba(8,9,16,0.96)",
+  border: `1px solid ${C.border}`,
+  borderRadius: 12,
+  backdropFilter: "blur(14px) saturate(160%)",
+  WebkitBackdropFilter: "blur(14px) saturate(160%)",
+  boxShadow: "0 24px 60px -20px rgba(0,0,0,0.7)",
+  transition: "opacity 200ms ease, transform 200ms ease",
+};
+const mobileLink = {
+  fontFamily: FONT_MONO, fontSize: 13.5, color: "#d8d9ea",
+  textDecoration: "none", padding: "12px 12px",
+  borderRadius: 8,
 };
 
 const heroStyle = {
@@ -1259,14 +1360,37 @@ html { scroll-behavior: smooth; }
 
 @media (max-width: 860px) {
   .nav-links-center { display: none !important; }
+  .nav-cta-desktop { display: none !important; }
+  .nav-hamburger { display: inline-flex !important; }
+  .mobile-drawer { display: flex !important; }
 }
 @media (max-width: 900px) {
   .features-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
+@media (max-width: 720px) {
+  .ra-grid3 { grid-template-columns: 1fr !important; }
+  .ra-steps-row { flex-direction: column !important; }
+  .ra-steps-row > div { width: 100% !important; flex-direction: column !important; }
+  .ra-steps-row > div > div[style*="background: linear-gradient(to right"] { display: none !important; }
+  .ra-footer-top {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 28px !important;
+  }
+  .ra-section { padding: 64px 18px !important; }
+  .ra-hero { padding: 100px 18px 60px !important; min-height: auto !important; }
+  .ra-demo-frame { border-radius: 10px !important; }
+  .ra-demo-stats { gap: 8px !important; }
+  .ra-demo-stats > div { flex: 1 1 calc(50% - 4px) !important; min-width: 0 !important; }
+}
+@media (max-width: 560px) {
+  .ra-footer-top {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .ra-hero { padding: 92px 14px 48px !important; }
+  .ra-section { padding: 56px 14px !important; }
+}
 @media (max-width: 480px) {
   .features-grid { grid-template-columns: 1fr !important; }
-}
-@media (max-width: 720px) {
-  .stepsRow { flex-direction: column; }
 }
 `;

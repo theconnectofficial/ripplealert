@@ -32,19 +32,22 @@ export function AuthProvider({ children }) {
     return () => { mounted = false; sub?.subscription?.unsubscribe(); };
   }, []);
 
+  const buildDemoUser = (overrides = {}) => ({
+    id: "demo-user",
+    email: overrides.email || "demo@ripplealert.dev",
+    user_metadata: {
+      full_name: overrides.full_name || "Demo User",
+      user_name: overrides.user_name || "demo",
+      avatar_url:
+        overrides.avatar_url ||
+        "https://avatars.githubusercontent.com/u/9919?v=4",
+      provider: overrides.provider || "demo",
+    },
+  });
+
   const signInWithGitHub = async () => {
     if (!supabaseEnabled) {
-      // Demo fallback so the OAuth flow can be previewed without Supabase
-      const demo = {
-        id: "demo-user",
-        email: "demo@ripplealert.dev",
-        user_metadata: {
-          full_name: "Demo User",
-          user_name: "demo",
-          avatar_url: "https://avatars.githubusercontent.com/u/9919?v=4",
-          provider: "demo",
-        },
-      };
+      const demo = buildDemoUser({ provider: "github-demo" });
       localStorage.setItem(DEMO_USER_KEY, JSON.stringify(demo));
       setUser(demo);
       return { error: null, demo: true };
@@ -59,6 +62,42 @@ export function AuthProvider({ children }) {
     return { error };
   };
 
+  const signInWithEmail = async (email, password) => {
+    if (!supabaseEnabled) {
+      if (!email || !password) return { error: { message: "Enter email and password." } };
+      const demo = buildDemoUser({
+        email,
+        full_name: email.split("@")[0],
+        user_name: email.split("@")[0],
+        provider: "email-demo",
+      });
+      localStorage.setItem(DEMO_USER_KEY, JSON.stringify(demo));
+      setUser(demo);
+      return { error: null, demo: true };
+    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
+  };
+
+  const signUpWithEmail = async (email, password) => {
+    if (!supabaseEnabled) {
+      return signInWithEmail(email, password);
+    }
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/app` },
+    });
+    return { error };
+  };
+
+  const continueAsDemo = () => {
+    const demo = buildDemoUser();
+    localStorage.setItem(DEMO_USER_KEY, JSON.stringify(demo));
+    setUser(demo);
+    return { error: null, demo: true };
+  };
+
   const signOut = async () => {
     if (!supabaseEnabled) {
       localStorage.removeItem(DEMO_USER_KEY);
@@ -70,7 +109,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthCtx.Provider value={{ user, loading, signInWithGitHub, signOut, supabaseEnabled }}>
+    <AuthCtx.Provider value={{ user, loading, signInWithGitHub, signInWithEmail, signUpWithEmail, continueAsDemo, signOut, supabaseEnabled }}>
       {children}
     </AuthCtx.Provider>
   );
