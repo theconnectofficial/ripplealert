@@ -1,0 +1,164 @@
+{
+  "CVE-2021-44228": {
+    "id": "CVE-2021-44228",
+    "description": "Apache Log4j2 2.0-beta9 through 2.15.0 JNDI features used in configuration, log messages, and parameters do not protect against attacker-controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled.",
+    "severity": "CRITICAL",
+    "cvssScore": 10.0,
+    "affectedPackage": "log4j-core",
+    "affectedVersionRange": "2.0-beta9 to 2.14.1",
+    "ecosystem": "maven",
+    "publishedDate": "2021-12-10",
+    "fixedVersion": "2.15.0",
+    "nodes": [
+      { "id": "log4j-core", "label": "log4j-core\n2.14.1", "level": 0, "severity": "CRITICAL", "type": "vulnerable" },
+      { "id": "elasticsearch", "label": "elasticsearch\n7.15.0", "level": 1, "severity": "CRITICAL", "type": "direct" },
+      { "id": "spring-boot-starter", "label": "spring-boot-starter\n2.6.0", "level": 1, "severity": "CRITICAL", "type": "direct" },
+      { "id": "apache-solr", "label": "apache-solr\n8.11.0", "level": 1, "severity": "CRITICAL", "type": "direct" },
+      { "id": "kafka-clients", "label": "kafka-clients\n3.0.0", "level": 1, "severity": "HIGH", "type": "direct" },
+      { "id": "hadoop-common", "label": "hadoop-common\n3.3.1", "level": 1, "severity": "HIGH", "type": "direct" },
+      { "id": "elastic-apm-agent", "label": "elastic-apm-agent\n1.28.0", "level": 2, "severity": "HIGH", "type": "transitive" },
+      { "id": "spring-cloud-starter", "label": "spring-cloud-starter\n2021.0.0", "level": 2, "severity": "HIGH", "type": "transitive" },
+      { "id": "logstash-core", "label": "logstash-core\n7.15.0", "level": 2, "severity": "HIGH", "type": "transitive" },
+      { "id": "flink-runtime", "label": "flink-runtime\n1.14.0", "level": 2, "severity": "MEDIUM", "type": "transitive" },
+      { "id": "druid-core", "label": "druid-core\n0.22.0", "level": 2, "severity": "MEDIUM", "type": "transitive" },
+      { "id": "neo4j-kernel", "label": "neo4j-kernel\n4.3.7", "level": 2, "severity": "MEDIUM", "type": "transitive" },
+      { "id": "aws-sdk-java", "label": "aws-sdk-java\n1.12.100", "level": 3, "severity": "MEDIUM", "type": "transitive" },
+      { "id": "datadog-agent", "label": "datadog-agent\n7.32.0", "level": 3, "severity": "MEDIUM", "type": "transitive" },
+      { "id": "jenkins-core", "label": "jenkins-core\n2.319", "level": 3, "severity": "MEDIUM", "type": "transitive" }
+    ],
+    "edges": [
+      { "source": "log4j-core", "target": "elasticsearch" },
+      { "source": "log4j-core", "target": "spring-boot-starter" },
+      { "source": "log4j-core", "target": "apache-solr" },
+      { "source": "log4j-core", "target": "kafka-clients" },
+      { "source": "log4j-core", "target": "hadoop-common" },
+      { "source": "elasticsearch", "target": "elastic-apm-agent" },
+      { "source": "elasticsearch", "target": "logstash-core" },
+      { "source": "spring-boot-starter", "target": "spring-cloud-starter" },
+      { "source": "spring-boot-starter", "target": "aws-sdk-java" },
+      { "source": "apache-solr", "target": "flink-runtime" },
+      { "source": "kafka-clients", "target": "druid-core" },
+      { "source": "hadoop-common", "target": "neo4j-kernel" },
+      { "source": "logstash-core", "target": "datadog-agent" },
+      { "source": "spring-cloud-starter", "target": "jenkins-core" }
+    ],
+    "affectedProjects": [
+      {
+        "id": "elasticsearch",
+        "name": "Elasticsearch",
+        "version": "7.15.0",
+        "repo": "elastic/elasticsearch",
+        "severity": "CRITICAL",
+        "dependencyType": "direct",
+        "stars": 64000
+      },
+      {
+        "id": "spring-boot-starter",
+        "name": "Spring Boot Starter",
+        "version": "2.6.0",
+        "repo": "spring-projects/spring-boot",
+        "severity": "CRITICAL",
+        "dependencyType": "direct",
+        "stars": 71000
+      },
+      {
+        "id": "apache-solr",
+        "name": "Apache Solr",
+        "version": "8.11.0",
+        "repo": "apache/solr",
+        "severity": "CRITICAL",
+        "dependencyType": "direct",
+        "stars": 8900
+      },
+      {
+        "id": "kafka-clients",
+        "name": "Kafka Clients",
+        "version": "3.0.0",
+        "repo": "apache/kafka",
+        "severity": "HIGH",
+        "dependencyType": "direct",
+        "stars": 27000
+      },
+      {
+        "id": "hadoop-common",
+        "name": "Hadoop Common",
+        "version": "3.3.1",
+        "repo": "apache/hadoop",
+        "severity": "HIGH",
+        "dependencyType": "direct",
+        "stars": 14000
+      },
+      {
+        "id": "flink-runtime",
+        "name": "Apache Flink Runtime",
+        "version": "1.14.0",
+        "repo": "apache/flink",
+        "severity": "MEDIUM",
+        "dependencyType": "transitive",
+        "stars": 22000
+      },
+      {
+        "id": "jenkins-core",
+        "name": "Jenkins Core",
+        "version": "2.319",
+        "repo": "jenkinsci/jenkins",
+        "severity": "MEDIUM",
+        "dependencyType": "transitive",
+        "stars": 21000
+      }
+    ]
+  },
+  "CVE-2022-22965": {
+    "id": "CVE-2022-22965",
+    "description": "A Spring MVC or Spring WebFlux application running on JDK 9+ may be vulnerable to remote code execution (RCE) via data binding. The specific exploit requires the application to run on Tomcat as a WAR deployment.",
+    "severity": "CRITICAL",
+    "cvssScore": 9.8,
+    "affectedPackage": "spring-webmvc",
+    "affectedVersionRange": "5.3.0 to 5.3.17",
+    "ecosystem": "maven",
+    "publishedDate": "2022-03-31",
+    "fixedVersion": "5.3.18",
+    "nodes": [
+      { "id": "spring-webmvc", "label": "spring-webmvc\n5.3.16", "level": 0, "severity": "CRITICAL", "type": "vulnerable" },
+      { "id": "spring-boot-web", "label": "spring-boot-web\n2.6.4", "level": 1, "severity": "CRITICAL", "type": "direct" },
+      { "id": "grails-core", "label": "grails-core\n5.1.2", "level": 1, "severity": "CRITICAL", "type": "direct" },
+      { "id": "jhipster", "label": "jhipster\n7.7.0", "level": 2, "severity": "HIGH", "type": "transitive" },
+      { "id": "spring-cloud-gateway", "label": "spring-cloud-gateway\n3.1.1", "level": 2, "severity": "HIGH", "type": "transitive" }
+    ],
+    "edges": [
+      { "source": "spring-webmvc", "target": "spring-boot-web" },
+      { "source": "spring-webmvc", "target": "grails-core" },
+      { "source": "spring-boot-web", "target": "jhipster" },
+      { "source": "spring-boot-web", "target": "spring-cloud-gateway" }
+    ],
+    "affectedProjects": [
+      {
+        "id": "spring-boot-web",
+        "name": "Spring Boot Web",
+        "version": "2.6.4",
+        "repo": "spring-projects/spring-boot",
+        "severity": "CRITICAL",
+        "dependencyType": "direct",
+        "stars": 71000
+      },
+      {
+        "id": "grails-core",
+        "name": "Grails Core",
+        "version": "5.1.2",
+        "repo": "grails/grails-core",
+        "severity": "CRITICAL",
+        "dependencyType": "direct",
+        "stars": 12000
+      },
+      {
+        "id": "jhipster",
+        "name": "JHipster",
+        "version": "7.7.0",
+        "repo": "jhipster/generator-jhipster",
+        "severity": "HIGH",
+        "dependencyType": "transitive",
+        "stars": 20000
+      }
+    ]
+  }
+}
